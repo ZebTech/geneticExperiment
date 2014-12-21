@@ -4,6 +4,7 @@ import random
 from random import shuffle
 import copy
 import ThreadPool
+from threading import Lock
 
 GOAL = 0.8
 INDIVIDUAL_SIZE = 10
@@ -41,7 +42,35 @@ class GeneticAlgorithm():
 
 
 class Individual():
-    pass
+    Size = 64
+
+    def __init__(self, genes):
+        if not genes:
+            genes = [GeneticAlgorithm.get_random_binary()
+                for i in xrange(Individual.Size)]
+        self.genes = genes
+
+    def random_mutate(self):
+        for i in xrange(len(self.genes)):
+            if GeneticAlgorithm.get_random_float() < 1.0/(self.genes):
+                self.set_gene(i, GeneticAlgorithm.get_random_binary())
+
+    def breed(self, parent):
+        for i in xrange(len(self.genes)):
+            self.set_gene(
+                i,
+                self.get_gene() if GeneticAlgorithm.get_random_binary == 1 else parent.get_gene(i)
+            )
+
+    def get_gene(self, place):
+        return self.set[place]
+
+    def set_gene(self, place, gene):
+        self.genes[place] = int(gene)
+
+    def to_string(self):
+        return self.genes.join('')
+
 
 
 class Population():
@@ -83,7 +112,11 @@ class Population():
         for i in parents:
             father = parents.pop()
             mother = parents.pop()
-            tp.add(generate_children(father, mother, new_population, pred))
+            tp.add(Population.generate_children(
+                father,
+                mother,
+                new_population,
+                pred))
         tp.join()
         self.set = new_population
         return self
@@ -99,7 +132,6 @@ class Population():
                 roulette[GeneticAlgorithm.get_random_int(self.set.length)]
             )
         return parents
-
 
     @staticmethod
     def sort(set, pred):
