@@ -76,7 +76,7 @@ class Individual():
 
 class Population():
     Lock = Lock()
-    Size = 500
+    Size = 250
     TruncateProportionalSelection = True
     Crossover = False
     Elitism = True

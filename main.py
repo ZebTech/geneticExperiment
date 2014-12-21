@@ -1,18 +1,20 @@
 # -*- coding: utf-8 -*-
 from GA.ga import GeneticAlgorithm
+from CNN.cnn import CNN
+import numpy as np
 
 
 class Predictor():
     def __init__(self):
-        self.optimal = [0,1,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1]
+        self.clf = CNN()
+        self.clf.train()
+        print 'Naive test score: ' + str(self.clf.score())
 
     def predict(self, individual):
-        count = 0
-        for i in xrange(len(self.optimal)):
-            a = self.optimal[i]
-            b = individual.get_gene(i)
-            count += 1 if a != b else 0
-        return float(count)/float(len(self.optimal))
+        number = 5
+        score = self.clf.predict(individual.genes)
+        total = np.sum(score)
+        return 2 * score[0][number] - total
 
 print 'Started'
 pred = Predictor()
