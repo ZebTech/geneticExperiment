@@ -45,6 +45,7 @@ class Individual():
 
 
 class Population():
+    Lock = Lock()
     Size = 100
     TruncateProportionalSelection = True
     Crossover = False
@@ -98,3 +99,40 @@ class Population():
                 roulette[GeneticAlgorithm.get_random_int(self.set.length)]
             )
         return parents
+
+
+    @staticmethod
+    def sort(set, pred):
+        return set.sort(
+            key=lambda x: pred.predict(x),
+            reverse=True
+        )
+
+    @staticmethod
+    def mutate(individual):
+        population = [individual, ]
+        for i in xrange(Population.Size - 1):
+            i = copy.deepcopy(individual)
+            population.append(i.random_mutate())
+
+    @staticmethod
+    def generate_random_population():
+        return [Individual() for i in xrange(Population.Size)]
+
+    @staticmethod
+    def generate_children(father, mother, population, pred):
+        son = copy.deepcopy(father)
+        daughter = copy.deepcopy(mother)
+        if Population.Crossover:
+            son = son.breed(mother)
+            daughter = daughter.breed(father)
+        else:
+            son.random_mutate()
+            daughter.random_mutate()
+        if Population.Tournament:
+            sub = Population.sort([father, mother, son, daughter])
+            with Population.Lock:
+                population.append(sub[0], sub[1])
+        else:
+            with Population.Lock:
+                population.append(son, daughter)
