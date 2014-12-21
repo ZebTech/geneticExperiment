@@ -8,7 +8,7 @@ from ThreadPool.threadpool import ThreadPool
 from threading import Lock
 
 GOAL = 0.95
-INDIVIDUAL_SIZE = 64
+INDIVIDUAL_SIZE = 784
 
 
 class GeneticAlgorithm():
@@ -42,7 +42,7 @@ class GeneticAlgorithm():
 
 
 class Individual():
-    Size = 64
+    Size = INDIVIDUAL_SIZE
 
     def __init__(self, genes=None):
         if not genes:

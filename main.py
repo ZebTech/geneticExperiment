@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from GA.ga import GeneticAlgorithm
 from CNN.cnn import CNN
-import numpy as np
 
 
 class Predictor():
@@ -11,10 +10,9 @@ class Predictor():
         print 'Naive test score: ' + str(self.clf.score())
 
     def predict(self, individual):
-        number = 5
+        number = 1
         score = self.clf.predict(individual.genes)
-        total = np.sum(score)
-        return 2 * score[0][number] - total
+        return 2 * score[0][number] - 1.0
 
 print 'Started'
 pred = Predictor()

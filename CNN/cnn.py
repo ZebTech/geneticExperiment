@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 
-import numpy as np
-from sklearn.datasets import load_digits
 from sklearn.linear_model import LogisticRegression
+from sklearn.datasets import fetch_mldata
+
 
 class CNN():
     def __init__(self):
-        self.clf = LogisticRegression()
-        digits = load_digits()
-        self.X = (digits.data/16).astype(int)
-        self.y = digits.target
+        self.clf = LogisticRegression(penalty='l1', C=10000.0)
+        mnist = fetch_mldata('MNIST original')
+        self.X = mnist.data[2000:8000]
+        self.y = mnist.target[2000:8000]
 
     def train(self):
         return self.clf.fit(self.X, self.y)
