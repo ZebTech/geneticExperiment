@@ -16,15 +16,12 @@ class Worker():
         self.thread.join()
 
     def work(self):
-#        print 'working'
         while True:
             self.pool.lock.acquire()
             while not self.pool.tasks:
                 if self.pool.exit:
-#                    print 'exit'
                     return
                 self.pool.lock.wait()
-#            print 'getting task'
             task = self.pool.tasks.pop()
             self.pool.lock.release()
             task()
@@ -39,14 +36,12 @@ class ThreadPool():
 
     def notify(self):
         self.lock.notifyAll()
-#        [self.lock.notify() for w in self.workers]
 
     def start(self):
         [w.start() for w in self.workers]
 
     def join(self):
         self.lock.acquire()
-#        print 'joined'
         self.exit = True
         self.notify()
         self.lock.release()

@@ -76,13 +76,13 @@ class Individual():
 
 class Population():
     Lock = Lock()
-    Size = 100
+    Size = 500
     TruncateProportionalSelection = True
     Crossover = False
     Elitism = True
     Tournament = True
-    SelectionStrength = 3
-    PercentElitism = 0.10
+    SelectionStrength = 300
+    PercentElitism = 0.15
 
     def __init__(self, individual=None):
         if isinstance(individual, list):
@@ -128,7 +128,7 @@ class Population():
         roulette = Population.create_roulette(sorted_set, pred)
         for i in xrange(Population.Size):
             parents.append(
-                roulette[GeneticAlgorithm.get_random_int(len(roulette))]
+                roulette[GeneticAlgorithm.get_random_int(len(roulette) - 1)]
             )
         return parents
 
