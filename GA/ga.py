@@ -74,7 +74,6 @@ class Individual():
         return ''.join(str(self.genes))
 
 
-
 class Population():
     Lock = Lock()
     Size = 100
@@ -129,7 +128,7 @@ class Population():
         roulette = Population.create_roulette(sorted_set, pred)
         for i in xrange(Population.Size):
             parents.append(
-                roulette[GeneticAlgorithm.get_random_int(len(self.population))]
+                roulette[GeneticAlgorithm.get_random_int(len(roulette))]
             )
         return parents
 
@@ -180,3 +179,4 @@ class Population():
         else:
             with Population.Lock:
                 population.append(son, daughter)
+        return population
