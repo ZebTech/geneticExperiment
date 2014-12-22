@@ -3,30 +3,53 @@
 import math
 import copy
 import random
+import numpy as np
+import matplotlib.pyplot as plt
 from random import shuffle, randint
 from ThreadPool.threadpool import ThreadPool
 from threading import Lock
 
 GOAL = 0.95
 INDIVIDUAL_SIZE = 784
+POPULATION_SIZE = 150
 
 
 class GeneticAlgorithm():
     def __init__(self, pred, ind=None):
+        self.init_plot()
         self.predictor = pred
         self.population = Population(ind)
         self.optimal_individual = ind if ind else Individual()
 
     def find_optimal(self):
+        self.evolution = []
         generation = 0
         while self.predictor.predict(self.optimal_individual) < GOAL:
             self.population = self.population.evolve(self.predictor)
             self.optimal_individual = self.population.find_optimal(
                 self.predictor
             )
-            print 'Generation ' + str(generation) + ', best score: ' + str(self.predictor.predict(self.optimal_individual))
+            opt = self.predictor.predict(self.optimal_individual)
+            self.evolution.append(opt)
+            self.plot()
+            print 'Generation ' + str(generation) + ', best score: ' + str(opt)
             generation += 1
         return self.optimal_individual
+
+    def init_plot(self):
+        plt.ion()
+        self.graph, = plt.plot([], [], 'ro')
+        plt.xlabel('Generation')
+        plt.ylabel('Optimal score')
+        plt.show()
+
+    def plot(self):
+        pass
+        self.graph.set_xdata(self.evolution)
+        self.graph.set_ydata([i for i in xrange(len(self.evolution))])
+        plt.plot((np.array(self.evolution)*100).tolist())
+        plt.draw()
+        plt.show()
 
     @staticmethod
     def get_random_binary():
@@ -76,12 +99,12 @@ class Individual():
 
 class Population():
     Lock = Lock()
-    Size = 250
+    Size = POPULATION_SIZE
     TruncateProportionalSelection = True
     Crossover = False
     Elitism = True
     Tournament = True
-    SelectionStrength = 300
+    SelectionStrength = 3
     PercentElitism = 0.15
 
     def __init__(self, individual=None):

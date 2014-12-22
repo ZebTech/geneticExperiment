@@ -14,9 +14,8 @@ class Predictor():
         score = self.clf.predict(individual.genes)
         return 2 * score[0][number] - 1.0
 
-print 'Started'
+
 pred = Predictor()
 ga = GeneticAlgorithm(pred)
-print 'Working'
 opt = ga.find_optimal()
 print 'Found optimal:' + opt.to_string()
