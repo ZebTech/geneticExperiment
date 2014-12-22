@@ -16,6 +16,11 @@ from theano.tensor.signal import downsample
 TRAINING_SIZE = 6000
 
 
+class LogisticRegression(object):
+    def __init__(self):
+        pass
+
+
 class HiddenLayer(object):
     def __init__(self, rng, input, n_in, n_out, W=None, b=None, activation=T.tanh):
         self.input = input
@@ -56,14 +61,12 @@ class ConvPoolLayer(object):
         self.params = [self.W, self.b]
 
     def define_output(self, filter_shape, image_shape, poolsize):
-        # convolve input feature maps with filters
         conv_out = conv.conv2d(
             input=input,
             filters=self.W,
             filter_shape=filter_shape,
             image_shape=image_shape
         )
-        # downsample each feature map individually, using maxpooling
         pooled_out = downsample.max_pool_2d(
             input=conv_out,
             ds=poolsize,
@@ -89,20 +92,60 @@ class ConvPoolLayer(object):
         return shared(values=b_values, borrow=True)
 
 
-class CNN():
-    def __init__(self):
+class CNN(object):
+    """
+        Implementation of a CNN, inspired from DL Tutorial.
+        alpha = learning rate
+        epochs = number of traiing epochs
+        nkerns = number of kernels on each layer
+        batch_size = the size of the training batches
+    """
+    def __init__(self, alpha=0.1, epochs=200, nkerns=[20, 50], batch_size=500):
+        self.fetch_sets()
+        rng = np.random.RandomState(1324)
+        x = T.matrix('x')
+        y = T.ivector('y')
+        input0 = x.reshape(batch_size, 1, 28, 28)
+        layer0 = ConvPoolLayer(
+            rng=rng,
+            input=input0,
+            image_shape=(batch_size, 1, 28, 28),
+            filter_shape=(nkerns[0], 1, 5, 5),
+            poolsize=(2, 2)
+        )
+        layer1 = ConvPoolLayer(
+            rng=rng,
+            input=layer0.output,
+            image_shape=(batch_size, nkerns[0], 12, 12),
+            filter_shape=(nkerns[1], nkerns[0], 5, 5),
+            poolsize=(2, 2)
+        )
+        input2 = layer1.output.flatten(2)
+        layer2 = HiddenLayer(
+            rng=rng,
+            input=input2,
+            n_in=nkerns[1] * 4 * 4,
+            n_out=500,
+            activation=T.tanh
+        )
+        layer3 = LogisticRegression(
+            input=layer2.output,
+            n_in=500,
+            n_out=10
+        )
+
+    def fetch_sets(self):
         mnist = fetch_mldata('MNIST original')
-        self.X = mnist.data[0:TRAINING_SIZE]
-        self.y = mnist.target[0:TRAINING_SIZE]
+        self.trainX = mnist.data[0:TRAINING_SIZE]
+        self.trainY = mnist.target[0:TRAINING_SIZE]
+        self.testX = mnist.data[TRAINING_SIZE:TRAINING_SIZE + 2000]
+        self.testY = mnist.target[TRAINING_SIZE:TRAINING_SIZE + 2000]
 
     def train(self):
-        return self.clf.fit(self.X, self.y)
+        return self.clf.fit(self.trainX, self.trainY)
 
     def score(self):
-        mnist = fetch_mldata('MNIST original')
-        X = mnist.data[TRAINING_SIZE:TRAINING_SIZE + 2000]
-        y = mnist.target[TRAINING_SIZE:TRAINING_SIZE + 2000]
-        return self.clf.score(X, y)
+        return self.clf.score(self.testX, self.testY)
 
     def predict(self, features):
         return self.clf.predict_proba(features)
