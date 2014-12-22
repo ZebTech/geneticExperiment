@@ -14,36 +14,37 @@ from theano.tensor.nnet import (
 
 TRAINING_SIZE = 6000
 
+
 class HiddenLayer(object):
     def __init__(self, rng, input, n_in, n_out, W=None, b=None, activation=T.tanh):
         self.input = input
         self.W = W if W else self.init_weights(n_in, n_out, activation)
         self.b = b if b else self.init_bias(n_out)
         self.params = [self.W, self.b]
-        
+
         linear_output = T.dot(input, self.W) + self.b
         self.output = (
-            linear_output if activation is None else activation(linear_output)        
+            linear_output if activation is None else activation(linear_output)
         )
-        
+
     def init_weights(self, n_in, n_out, activation):
         W_values = np.asarray(
-                rng.uniform(
-                    low=-np.sqrt(6. / (n_in + n_out)),
-                    high=np.sqrt(6. / (n_in + n_out)),
-                    size=(n_in, n_out)
-                ),
-                dtype=theano.config.floatX
-            )
+            rng.uniform(
+                low=-np.sqrt(6. / (n_in + n_out)),
+                high=np.sqrt(6. / (n_in + n_out)),
+                size=(n_in, n_out)
+            ),
+            dtype=theano.config.floatX
+        )
         if activation == sigmoid:
             W_values *= 4
         return shared(value=W_values, name='W', borrow=True)
-        
+
     def init_bias(self, n_out):
         b_values = np.zeros((n_out,), dtype=theano.config.floatX)
         return shared(value=b_values, name='b', borrow=True)
-    
-    
+
+
 class ConvPoolLayer(object):
     def __init__(self):
         pass
@@ -51,7 +52,6 @@ class ConvPoolLayer(object):
 
 class CNN():
     def __init__(self):
-        self.clf = LogisticRegression(penalty='l1', C=10000.0)
         mnist = fetch_mldata('MNIST original')
         self.X = mnist.data[0:TRAINING_SIZE]
         self.y = mnist.target[0:TRAINING_SIZE]
