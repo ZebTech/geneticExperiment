@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-import cPickle
-import gzip
+import warnings
 import theano
 import theano.tensor as T
 import numpy as np
@@ -15,6 +14,8 @@ from theano.tensor.nnet import (
     softmax
 )
 from theano.tensor.signal import downsample
+
+warnings.filterwarnings("ignore")
 
 TRAINING_SIZE = 6000
 
@@ -216,29 +217,38 @@ class CNN(object):
         )
 
     def fetch_sets(self):
-#        f = gzip.open('mnist.pkl.gz', 'rb')
-#        train_set, valid_set, test_set = cPickle.load(f)
-#        f.close()
-#        self.trainX = train_set
         mnist = fetch_mldata('MNIST original')
         self.trainX = mnist.data[0:TRAINING_SIZE]
         self.trainY = mnist.target[0:TRAINING_SIZE]
         self.testX = mnist.data[TRAINING_SIZE:TRAINING_SIZE + 2000]
         self.testY = mnist.target[TRAINING_SIZE:TRAINING_SIZE + 2000]
+        self.trainX = shared(
+            np.asarray(self.trainX, dtype=theano.config.floatX),
+            borrow=True
+        )
+        self.trainY = T.cast(
+            shared(
+                np.asarray(self.trainY, dtype=theano.config.floatX),
+                borrow=True),
+            'int32'
+        )
 
-        self.trainX = shared(np.asarray(self.trainX, dtype=theano.config.floatX), borrow=True)
-
-        self.trainY = T.cast(shared(np.asarray(self.trainY, dtype=theano.config.floatX), borrow=True), 'int32')
-        self.testX = shared(np.asarray(self.testX, dtype=theano.config.floatX), borrow=True)
-        self.testY = T.cast(shared(np.asarray(self.testY, dtype=theano.config.floatX), borrow=True), 'int32')
+        self.testX = shared(
+            np.asarray(self.testX, dtype=theano.config.floatX),
+            borrow=True
+        )
+        self.testY = T.cast(
+            shared(
+                np.asarray(self.testY, dtype=theano.config.floatX),
+                borrow=True),
+            'int32'
+        )
 
     def train(self):
         n_train_batches = TRAINING_SIZE / self.batch_size
         for epoch in xrange(self.epochs):
             for minibatch_index in xrange(n_train_batches):
                 iter = epoch * n_train_batches + minibatch_index
-                if iter % 100 == 0:
-                    print 'training @ iter = ', iter
                 cost_ij = self.train_model(minibatch_index)
                 if (iter + 1) % n_train_batches == 0:
                     validation_loss = self.score()
@@ -258,10 +268,7 @@ class CNN(object):
 
 if __name__ == '__main__':
     print 'creating'
-    cnn = CNN(epochs=30, batch_size=1000)
+    cnn = CNN(epochs=100, batch_size=1000)
     print 'created'
     cnn.train()
     print 'trained'
-#    clf = CNN()
-#    clf.train()
-#    print 'Naive test score: ' + str(clf.score())
