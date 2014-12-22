@@ -9,7 +9,7 @@ from random import shuffle, randint
 from ThreadPool.threadpool import ThreadPool
 from threading import Lock
 
-GOAL = 0.95
+GOAL = 0.8
 INDIVIDUAL_SIZE = 784
 POPULATION_SIZE = 150
 

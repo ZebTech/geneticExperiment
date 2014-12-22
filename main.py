@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from GA.ga import GeneticAlgorithm
 from CNN.cnn import CNN
+from utils.utils import save_fig
 
 
 class Predictor():
@@ -19,3 +20,4 @@ pred = Predictor()
 ga = GeneticAlgorithm(pred)
 opt = ga.find_optimal()
 print 'Found optimal:' + opt.to_string()
+save_fig(opt.genes)
