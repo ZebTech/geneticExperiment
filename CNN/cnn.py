@@ -15,7 +15,10 @@ class CNN():
         return self.clf.fit(self.X, self.y)
 
     def score(self):
-        return self.clf.score(self.X, self.y)
+        mnist = fetch_mldata('MNIST original')
+        X = mnist.data[8000:12000]
+        y = mnist.target[8000:12000]
+        return self.clf.score(X, y)
 
     def predict(self, features):
         return self.clf.predict_proba(features)
