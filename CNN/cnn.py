@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import cPickle
+import gzip
 import theano
 import theano.tensor as T
 import numpy as np
@@ -19,51 +21,51 @@ TRAINING_SIZE = 6000
 
 class LogisticRegression(object):
     def __init__(self, input, n_in, n_out):
-        self.W = self.init_weights()
-        self.b = self.init_bias()
+        self.W = self.init_weights(n_in, n_out)
+        self.b = self.init_bias(n_out)
         self.p_y_given_x = softmax(T.dot(input, self.W) + self.b)
         self.y_pred = T.argmax(self.p_y_given_x, axis=1)
         self.params = [self.W, self.b]
 
-        def negative_log_likelihood(self, y):
-            return -T.mean(T.log(self.p_y_given_x)[T.arange(y.shape[0]), y])
+    def negative_log_likelihood(self, y):
+        return -T.mean(T.log(self.p_y_given_x)[T.arange(y.shape[0]), y])
 
-        def errors(self, y):
-            if y.ndim != self.y_pred.ndim:
-                raise TypeError(
-                    'y should have the same shape as self.y_pred',
-                    ('y', y.type, 'y_pred', self.y_pred.type)
-                )
-            if y.dtype.startswith('int'):
-                return T.mean(T.neq(self.y_pred, y))
-            else:
-                raise NotImplementedError()
-
-        def init_weights(self):
-            return shared(
-                value=np.zeros(
-                    (n_in, n_out),
-                    dtype=theano.config.floatX
-                ),
-                name='W',
-                borrow=True
+    def errors(self, y):
+        if y.ndim != self.y_pred.ndim:
+            raise TypeError(
+                'y should have the same shape as self.y_pred',
+                ('y', y.type, 'y_pred', self.y_pred.type)
             )
+        if y.dtype.startswith('int'):
+            return T.mean(T.neq(self.y_pred, y))
+        else:
+            raise NotImplementedError()
 
-        def init_bias(self):
-            return shared(
-                value=np.zeros(
-                    (n_out,),
-                    dtype=theano.config.floatX
-                ),
-                name='b',
-                borrow=True
-            )
+    def init_weights(self, n_in, n_out):
+        return shared(
+            value=np.zeros(
+                (n_in, n_out),
+                dtype=theano.config.floatX
+            ),
+            name='W',
+            borrow=True
+        )
+
+    def init_bias(self, n_out):
+        return shared(
+            value=np.zeros(
+                (n_out,),
+                dtype=theano.config.floatX
+            ),
+            name='b',
+            borrow=True
+        )
 
 
 class HiddenLayer(object):
     def __init__(self, rng, input, n_in, n_out, W=None, b=None, activation=T.tanh):
         self.input = input
-        self.W = W if W else self.init_weights(n_in, n_out, activation)
+        self.W = W if W else self.init_weights(rng, n_in, n_out, activation)
         self.b = b if b else self.init_bias(n_out)
         self.params = [self.W, self.b]
 
@@ -72,7 +74,7 @@ class HiddenLayer(object):
             linear_output if activation is None else activation(linear_output)
         )
 
-    def init_weights(self, n_in, n_out, activation):
+    def init_weights(self, rng, n_in, n_out, activation):
         W_values = np.asarray(
             rng.uniform(
                 low=-np.sqrt(6. / (n_in + n_out)),
@@ -94,14 +96,14 @@ class ConvPoolLayer(object):
     def __init__(self, rng, input, filter_shape, image_shape, poolsize=(2, 2)):
         assert image_shape[1] == filter_shape[1]
         self.input = input
-        self.W = self.init_weights(filter_shape, poolsize)
+        self.W = self.init_weights(rng, filter_shape, poolsize)
         self.b = self.init_bias(filter_shape)
         self.output = self.define_output(filter_shape, image_shape, poolsize)
         self.params = [self.W, self.b]
 
     def define_output(self, filter_shape, image_shape, poolsize):
         conv_out = conv.conv2d(
-            input=input,
+            input=self.input,
             filters=self.W,
             filter_shape=filter_shape,
             image_shape=image_shape
@@ -113,7 +115,7 @@ class ConvPoolLayer(object):
         )
         return T.tanh(pooled_out + self.b.dimshuffle('x', 0, 'x', 'x'))
 
-    def init_weights(self, filter_shape, poolsize):
+    def init_weights(self, rng, filter_shape, poolsize):
         fan_in = np.prod(filter_shape[1:])
         fan_out = (filter_shape[0] * np.prod(filter_shape[2:]) /
                    np.prod(poolsize))
@@ -128,7 +130,7 @@ class ConvPoolLayer(object):
 
     def init_bias(self, filter_shape):
         b_values = np.zeros((filter_shape[0], ), dtype=theano.config.floatX)
-        return shared(values=b_values, borrow=True)
+        return shared(value=b_values, borrow=True)
 
 
 class CNN(object):
@@ -140,11 +142,17 @@ class CNN(object):
         batch_size = the size of the training batches
     """
     def __init__(self, alpha=0.1, epochs=200, nkerns=[20, 50], batch_size=500):
+        self.epochs = epochs
+        self.alpha = alpha
+        self.batch_size = batch_size
         self.fetch_sets()
+        self.init_network(nkerns, batch_size)
+
+    def init_network(self, nkerns, batch_size):
         rng = np.random.RandomState(1324)
         x = T.matrix('x')
         y = T.ivector('y')
-        input0 = x.reshape(batch_size, 1, 28, 28)
+        input0 = x.reshape((batch_size, 1, 28, 28))
         layer0 = ConvPoolLayer(
             rng=rng,
             input=input0,
@@ -172,30 +180,88 @@ class CNN(object):
             n_in=500,
             n_out=10
         )
+        cost = layer3.negative_log_likelihood(y)
+        params = (
+            layer3.params +
+            layer2.params +
+            layer1.params +
+            layer0.params
+        )
+        grads = T.grad(cost, params)
+        updates = [
+            (param_i, param_i - self.alpha * grad_i)
+            for param_i, grad_i in zip(params, grads)
+        ]
+
+        index = T.lscalar()
+        self.train_model = theano.function(
+            [index],
+            cost,
+            updates=updates,
+            givens={
+                x: self.trainX[index * batch_size: (index + 1) * batch_size],
+                y: self.trainY[index * batch_size: (index + 1) * batch_size]
+            },
+            on_unused_input='ignore'
+        )
+
+        self.validate_model = theano.function(
+            [index],
+            layer3.errors(y),
+            givens={
+                x: self.testX[index * batch_size: (index + 1) * batch_size],
+                y: self.testY[index * batch_size: (index + 1) * batch_size]
+            },
+            on_unused_input='ignore'
+        )
 
     def fetch_sets(self):
+#        f = gzip.open('mnist.pkl.gz', 'rb')
+#        train_set, valid_set, test_set = cPickle.load(f)
+#        f.close()
+#        self.trainX = train_set
         mnist = fetch_mldata('MNIST original')
         self.trainX = mnist.data[0:TRAINING_SIZE]
         self.trainY = mnist.target[0:TRAINING_SIZE]
         self.testX = mnist.data[TRAINING_SIZE:TRAINING_SIZE + 2000]
         self.testY = mnist.target[TRAINING_SIZE:TRAINING_SIZE + 2000]
 
+        self.trainX = shared(np.asarray(self.trainX, dtype=theano.config.floatX), borrow=True)
+
+        self.trainY = T.cast(shared(np.asarray(self.trainY, dtype=theano.config.floatX), borrow=True), 'int32')
+        self.testX = shared(np.asarray(self.testX, dtype=theano.config.floatX), borrow=True)
+        self.testY = T.cast(shared(np.asarray(self.testY, dtype=theano.config.floatX), borrow=True), 'int32')
+
     def train(self):
-        return self.clf.fit(self.trainX, self.trainY)
+        n_train_batches = TRAINING_SIZE / self.batch_size
+        for epoch in xrange(self.epochs):
+            for minibatch_index in xrange(n_train_batches):
+                iter = epoch * n_train_batches + minibatch_index
+                if iter % 100 == 0:
+                    print 'training @ iter = ', iter
+                cost_ij = self.train_model(minibatch_index)
+                if (iter + 1) % n_train_batches == 0:
+                    validation_loss = self.score()
+                    print('epoch %i, minibatch %i/%i, validation error %f %%' %
+                          (epoch, minibatch_index + 1, n_train_batches,
+                           validation_loss * 100.))
 
     def score(self):
-        return self.clf.score(self.testX, self.testY)
+        n_test_batches = 2000 / self.batch_size
+        validation_losses = [self.validate_model(i) for i
+                             in xrange(n_test_batches)]
+        return np.mean(validation_losses)
 
     def predict(self, features):
         return self.clf.predict_proba(features)
 
 
 if __name__ == '__main__':
-    rng = np.random.RandomState(23)
-    input = T.matrix('x')
-    y = T.ivector('y')
-    h = HiddenLayer(rng=rng, input=input, n_in=784, n_out=10)
+    print 'creating'
+    cnn = CNN(epochs=30, batch_size=1000)
     print 'created'
+    cnn.train()
+    print 'trained'
 #    clf = CNN()
 #    clf.train()
 #    print 'Naive test score: ' + str(clf.score())
