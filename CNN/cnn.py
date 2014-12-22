@@ -11,6 +11,7 @@ from theano.tensor.nnet import (
     conv,
     sigmoid,
 )
+from theano.tensor.signal import downsample
 
 TRAINING_SIZE = 6000
 
@@ -46,8 +47,46 @@ class HiddenLayer(object):
 
 
 class ConvPoolLayer(object):
-    def __init__(self):
-        pass
+    def __init__(self, rng, input, filter_shape, image_shape, poolsize=(2, 2)):
+        assert image_shape[1] == filter_shape[1]
+        self.input = input
+        self.W = self.init_weights(filter_shape, poolsize)
+        self.b = self.init_bias(filter_shape)
+        self.output = self.define_output(filter_shape, image_shape, poolsize)
+        self.params = [self.W, self.b]
+
+    def define_output(self, filter_shape, image_shape, poolsize):
+        # convolve input feature maps with filters
+        conv_out = conv.conv2d(
+            input=input,
+            filters=self.W,
+            filter_shape=filter_shape,
+            image_shape=image_shape
+        )
+        # downsample each feature map individually, using maxpooling
+        pooled_out = downsample.max_pool_2d(
+            input=conv_out,
+            ds=poolsize,
+            ignore_border=True
+        )
+        return T.tanh(pooled_out + self.b.dimshuffle('x', 0, 'x', 'x'))
+
+    def init_weights(self, filter_shape, poolsize):
+        fan_in = np.prod(filter_shape[1:])
+        fan_out = (filter_shape[0] * np.prod(filter_shape[2:]) /
+                   np.prod(poolsize))
+        W_bound = np.sqrt(6.0 / (fan_in + fan_out))
+        return theano.shared(
+            np.asarray(
+                rng.uniform(low=-W_bound, high=W_bound, size=filter_shape),
+                dtype=theano.config.floatX
+            ),
+            borrow=True
+        )
+
+    def init_bias(self, filter_shape):
+        b_values = np.zeros((filter_shape[0], ), dtype=theano.config.floatX)
+        return shared(values=b_values, borrow=True)
 
 
 class CNN():
