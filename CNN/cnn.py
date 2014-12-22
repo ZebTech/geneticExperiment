@@ -3,7 +3,7 @@
 from sklearn.linear_model import LogisticRegression
 from sklearn.datasets import fetch_mldata
 
-TRAINING_SIZE = 8000
+TRAINING_SIZE = 10000
 
 
 class CNN():
