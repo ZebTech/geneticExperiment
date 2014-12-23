@@ -3,6 +3,8 @@
 from multiprocessing import cpu_count
 from threading import Thread, Condition
 
+NB_WORKERS = cpu_count()
+
 
 class Worker():
     def __init__(self, pool):
@@ -29,7 +31,7 @@ class Worker():
 
 class ThreadPool():
     def __init__(self, tasks=[]):
-        self.workers = [Worker(self) for i in xrange(cpu_count())]
+        self.workers = [Worker(self) for i in xrange(NB_WORKERS)]
         self.tasks = tasks
         self.lock = Condition()
         self.exit = False

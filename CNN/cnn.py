@@ -18,8 +18,8 @@ from theano.tensor.signal import downsample
 
 warnings.filterwarnings("ignore")
 
-TRAINING_SIZE = 6000
-TESTING_SIZE = 2000
+TRAINING_SIZE = 10000
+TESTING_SIZE = 3000
 
 
 class LogisticRegression(object):
@@ -274,7 +274,7 @@ class CNN(object):
         return np.mean(validation_losses)
 
     def predict(self, features):
-        formated = np.zeros(
+        formated = np.ones(
             (self.batch_size, len(features[0])),
             dtype=theano.config.floatX
         )

@@ -158,7 +158,8 @@ class Population():
     @staticmethod
     def create_roulette(popu, pred):
         roulette = []
-        fitnessTotal = sum(math.exp(pred.predict(x) * Population.SelectionStrength) for x in popu)
+        fitnessTotal = sum(math.exp(pred.predict(x) *
+                           Population.SelectionStrength) for x in popu)
         for ind in popu:
             to_create = 1 + math.exp(pred.predict(ind) * Population.SelectionStrength) / fitnessTotal
             for j in xrange(int(to_create)):
