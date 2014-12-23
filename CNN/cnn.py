@@ -153,7 +153,6 @@ class CNN(object):
 
     def init_network(self, nkerns, batch_size):
         rng = np.random.RandomState(1324)
-        predX = T.matrix('predX')
         x = T.matrix('x')
         y = T.ivector('y')
         input0 = x.reshape((batch_size, 1, 28, 28))
@@ -179,7 +178,7 @@ class CNN(object):
             n_out=500,
             activation=T.tanh
         )
-        layer3 = LogisticRegression(
+        layer3 = self.layer3 = LogisticRegression(
             input=layer2.output,
             n_in=500,
             n_out=10
@@ -218,15 +217,15 @@ class CNN(object):
             },
             on_unused_input='ignore'
         )
-
-#        self.predict_model = function(
-#            [predX],
-#            layer3.y_pred,
-#            givens={
-#                x: predX
-#            },
-#            on_unused_input='ignore'
-#        )
+        predX = T.matrix('predX')
+        self.predict_model = function(
+            [predX],
+            self.layer3.p_y_given_x,
+            givens={
+                x: predX[0: batch_size]
+            },
+            on_unused_input='ignore'
+        )
 
     def fetch_sets(self):
         mnist = fetch_mldata('MNIST original')
@@ -275,7 +274,13 @@ class CNN(object):
         return np.mean(validation_losses)
 
     def predict(self, features):
-        return self.predict_model(features)
+        formated = np.zeros(
+            (self.batch_size, len(features[0])),
+            dtype=theano.config.floatX
+        )
+        formated[0:len(features)] = features
+        result = self.predict_model(formated)
+        return result[0:len(features)]
 
 
 if __name__ == '__main__':
@@ -284,7 +289,7 @@ if __name__ == '__main__':
     print 'created'
     cnn.train()
     print 'trained'
-#    print cnn.testX.ravel()
-#    m = shared(value=cnn.testX[25], dtype=theano.config.floatX)
-#    print cnn.predict(m)
-#    print cnn.pred.negative_log_likelihood(m)
+    m = cnn.testX[25:25+cnn.batch_size]
+    mnist = fetch_mldata('MNIST original')
+    X = mnist.data[0:TRAINING_SIZE]
+    print cnn.predict(X[0:5])
