@@ -4,6 +4,7 @@ from CNN.cnn import CNN
 from utils.utils import save_fig
 from threading import Lock
 
+NB_IMAGES = 1000
 
 class Predictor():
     def __init__(self, cnn, number):
@@ -23,9 +24,10 @@ class Predictor():
 
 cnn = CNN(epochs=100, batch_size=100)
 cnn.train()
-for i in xrange(10):
-    pred = Predictor(cnn, i)
-    ga = GeneticAlgorithm(pred)
-    opt = ga.find_optimal()
-    print 'Found optimal:' + opt.to_string()
-    save_fig(opt.genes, str(i) + '-')
+for i in xrange(NB_IMAGES):
+    for i in xrange(10):
+        pred = Predictor(cnn, i)
+        ga = GeneticAlgorithm(pred)
+        opt = ga.find_optimal()
+        print 'Found optimal:' + opt.to_string()
+        save_fig(opt.genes, str(i) + '-')
