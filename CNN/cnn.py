@@ -7,6 +7,7 @@ import numpy as np
 from sklearn.datasets import fetch_mldata
 from theano import (
     shared,
+    function,
 )
 from theano.tensor.nnet import (
     conv,
@@ -18,6 +19,7 @@ from theano.tensor.signal import downsample
 warnings.filterwarnings("ignore")
 
 TRAINING_SIZE = 6000
+TESTING_SIZE = 2000
 
 
 class LogisticRegression(object):
@@ -138,7 +140,7 @@ class CNN(object):
     """
         Implementation of a CNN, inspired from DL Tutorial.
         alpha = learning rate
-        epochs = number of traiing epochs
+        epochs = number of training epochs
         nkerns = number of kernels on each layer
         batch_size = the size of the training batches
     """
@@ -151,6 +153,7 @@ class CNN(object):
 
     def init_network(self, nkerns, batch_size):
         rng = np.random.RandomState(1324)
+        predX = T.matrix('predX')
         x = T.matrix('x')
         y = T.ivector('y')
         input0 = x.reshape((batch_size, 1, 28, 28))
@@ -195,7 +198,7 @@ class CNN(object):
         ]
 
         index = T.lscalar()
-        self.train_model = theano.function(
+        self.train_model = function(
             [index],
             cost,
             updates=updates,
@@ -206,7 +209,7 @@ class CNN(object):
             on_unused_input='ignore'
         )
 
-        self.validate_model = theano.function(
+        self.validate_model = function(
             [index],
             layer3.errors(y),
             givens={
@@ -216,12 +219,21 @@ class CNN(object):
             on_unused_input='ignore'
         )
 
+#        self.predict_model = function(
+#            [predX],
+#            layer3.y_pred,
+#            givens={
+#                x: predX
+#            },
+#            on_unused_input='ignore'
+#        )
+
     def fetch_sets(self):
         mnist = fetch_mldata('MNIST original')
         self.trainX = mnist.data[0:TRAINING_SIZE]
         self.trainY = mnist.target[0:TRAINING_SIZE]
-        self.testX = mnist.data[TRAINING_SIZE:TRAINING_SIZE + 2000]
-        self.testY = mnist.target[TRAINING_SIZE:TRAINING_SIZE + 2000]
+        self.testX = mnist.data[TRAINING_SIZE:TRAINING_SIZE + TESTING_SIZE]
+        self.testY = mnist.target[TRAINING_SIZE:TRAINING_SIZE + TESTING_SIZE]
         self.trainX = shared(
             np.asarray(self.trainX, dtype=theano.config.floatX),
             borrow=True
@@ -257,18 +269,22 @@ class CNN(object):
                            validation_loss * 100.))
 
     def score(self):
-        n_test_batches = 2000 / self.batch_size
+        n_test_batches = TESTING_SIZE / self.batch_size
         validation_losses = [self.validate_model(i) for i
                              in xrange(n_test_batches)]
         return np.mean(validation_losses)
 
     def predict(self, features):
-        return self.clf.predict_proba(features)
+        return self.predict_model(features)
 
 
 if __name__ == '__main__':
     print 'creating'
-    cnn = CNN(epochs=100, batch_size=1000)
+    cnn = CNN(epochs=1, batch_size=1000)
     print 'created'
     cnn.train()
     print 'trained'
+#    print cnn.testX.ravel()
+#    m = shared(value=cnn.testX[25], dtype=theano.config.floatX)
+#    print cnn.predict(m)
+#    print cnn.pred.negative_log_likelihood(m)
