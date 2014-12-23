@@ -30,4 +30,4 @@ for i in xrange(NB_IMAGES):
         ga = GeneticAlgorithm(pred)
         opt = ga.find_optimal()
         print 'Found optimal:' + opt.to_string()
-        save_fig(opt.genes, str(i) + '-')
+        save_fig(opt.genes, str(i))

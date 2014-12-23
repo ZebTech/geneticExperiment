@@ -18,8 +18,8 @@ from theano.tensor.signal import downsample
 
 warnings.filterwarnings("ignore")
 
-TRAINING_SIZE = 70000
-TESTING_SIZE = 0
+TRAINING_SIZE = 69000
+TESTING_SIZE = 1000
 
 
 class LogisticRegression(object):
