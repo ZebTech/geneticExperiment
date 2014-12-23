@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import warnings
+import time
 import theano
 import pickle as pickle
 import theano.tensor as T
@@ -19,7 +20,7 @@ from theano.tensor.signal import downsample
 
 warnings.filterwarnings("ignore")
 
-TRAINING_SIZE = 1 #69000
+TRAINING_SIZE = 6000
 TESTING_SIZE = 1000
 
 
@@ -155,12 +156,14 @@ class CNN(object):
         nkerns = number of kernels on each layer
         batch_size = the size of the training batches
     """
-    def __init__(self, alpha=0.1, epochs=200, nkerns=[20, 50], batch_size=500):
+    def __init__(self, alpha=0.1, epochs=200, nkerns=[20, 50], batch_size=500, 
+                 instance_id=None):
         self.epochs = epochs
         self.alpha = alpha
         self.batch_size = batch_size
         self.fetch_sets()
         self.init_network(nkerns, batch_size)
+        self.instance = instance_id
 
     def init_network(self, nkerns, batch_size):
         rng = np.random.RandomState(1324)
@@ -267,8 +270,11 @@ class CNN(object):
         )
 
     def train(self):
+        old_training = 0
+        if self.instance:
+            old_training = self.load_training_values()
         n_train_batches = TRAINING_SIZE / self.batch_size
-        for epoch in xrange(self.epochs):
+        for epoch in xrange(self.epochs - old_training):
             for minibatch_index in xrange(n_train_batches):
                 iter = epoch * n_train_batches + minibatch_index
                 cost_ij = self.train_model(minibatch_index)
@@ -277,12 +283,28 @@ class CNN(object):
                     print('epoch %i, minibatch %i/%i, validation error %f %%' %
                           (epoch, minibatch_index + 1, n_train_batches,
                            validation_loss * 100.))
+                    self.save_network(epoch + old_training)
+                    
+    def load_training_values(self):
+        saved = pickle.load(
+            open('layers_' + str(self.instance) + '.pkl', 'wb')
+        )
+        if saved and len(saved) == 5:
+            self.layer0 = saved[4]
+            self.layer1 = saved[3]
+            self.layer2 = saved[2]
+            self.layer3 = saved[1]
+            return saved[0]
+        return 0
+                    
+    def save_network(self, epoch):
         pickle.dump([
+            epoch,
             self.layer3,
             self.layer2,
             self.layer1,
             self.layer0,
-        ], open('layers_' + str(TRAINING_SIZE) + '.pkl', 'wb'))
+        ], open('layers_' + str(self.instance) + '.pkl', 'wb'))
 
     def score(self):
         n_test_batches = TESTING_SIZE / self.batch_size
@@ -302,7 +324,7 @@ class CNN(object):
 
 if __name__ == '__main__':
     print 'creating'
-    cnn = CNN(epochs=1, batch_size=1000)
+    cnn = CNN(epochs=10, batch_size=1000)
     print 'created'
     cnn.train()
     print 'trained'

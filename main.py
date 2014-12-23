@@ -5,6 +5,7 @@ from utils.utils import save_fig
 from threading import Lock
 
 NB_IMAGES = 1000
+RUN_INSTANCE = 0 # Used to check the existance of a previous learning instance
 
 class Predictor():
     def __init__(self, cnn, number):
