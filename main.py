@@ -4,7 +4,7 @@ from CNN.cnn import CNN
 from utils.utils import save_fig
 from threading import Lock
 
-NB_IMAGES = 1000
+NB_IMAGES = 100
 
 class Predictor():
     def __init__(self, cnn, number):
