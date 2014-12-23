@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import warnings
 import theano
+import pickle as pickle
 import theano.tensor as T
 import numpy as np
 
@@ -18,11 +19,21 @@ from theano.tensor.signal import downsample
 
 warnings.filterwarnings("ignore")
 
-TRAINING_SIZE = 69000
+TRAINING_SIZE = 1 #69000
 TESTING_SIZE = 1000
 
 
-class LogisticRegression(object):
+class Layer(object):
+    def __getstate__(self):
+        return (self.W, self.b)
+
+    def __setstate__(self, state):
+        W, b = state
+        self.W = W
+        self.b = b
+
+
+class LogisticRegression(Layer):
     def __init__(self, input, n_in, n_out):
         self.W = self.init_weights(n_in, n_out)
         self.b = self.init_bias(n_out)
@@ -65,7 +76,7 @@ class LogisticRegression(object):
         )
 
 
-class HiddenLayer(object):
+class HiddenLayer(Layer):
     def __init__(self, rng, input, n_in, n_out, W=None, b=None, activation=T.tanh):
         self.input = input
         self.W = W if W else self.init_weights(rng, n_in, n_out, activation)
@@ -95,7 +106,7 @@ class HiddenLayer(object):
         return shared(value=b_values, name='b', borrow=True)
 
 
-class ConvPoolLayer(object):
+class ConvPoolLayer(Layer):
     def __init__(self, rng, input, filter_shape, image_shape, poolsize=(2, 2)):
         assert image_shape[1] == filter_shape[1]
         self.input = input
@@ -156,39 +167,39 @@ class CNN(object):
         x = T.matrix('x')
         y = T.ivector('y')
         input0 = x.reshape((batch_size, 1, 28, 28))
-        layer0 = ConvPoolLayer(
+        self.layer0 = ConvPoolLayer(
             rng=rng,
             input=input0,
             image_shape=(batch_size, 1, 28, 28),
             filter_shape=(nkerns[0], 1, 5, 5),
             poolsize=(2, 2)
         )
-        layer1 = ConvPoolLayer(
+        self.layer1 = ConvPoolLayer(
             rng=rng,
-            input=layer0.output,
+            input=self.layer0.output,
             image_shape=(batch_size, nkerns[0], 12, 12),
             filter_shape=(nkerns[1], nkerns[0], 5, 5),
             poolsize=(2, 2)
         )
-        input2 = layer1.output.flatten(2)
-        layer2 = HiddenLayer(
+        input2 = self.layer1.output.flatten(2)
+        self.layer2 = HiddenLayer(
             rng=rng,
             input=input2,
             n_in=nkerns[1] * 4 * 4,
             n_out=500,
             activation=T.tanh
         )
-        layer3 = self.layer3 = LogisticRegression(
-            input=layer2.output,
+        self.layer3 = LogisticRegression(
+            input=self.layer2.output,
             n_in=500,
             n_out=10
         )
-        cost = layer3.negative_log_likelihood(y)
+        cost = self.layer3.negative_log_likelihood(y)
         params = (
-            layer3.params +
-            layer2.params +
-            layer1.params +
-            layer0.params
+            self.layer3.params +
+            self.layer2.params +
+            self.layer1.params +
+            self.layer0.params
         )
         grads = T.grad(cost, params)
         updates = [
@@ -210,7 +221,7 @@ class CNN(object):
 
         self.validate_model = function(
             [index],
-            layer3.errors(y),
+            self.layer3.errors(y),
             givens={
                 x: self.testX[index * batch_size: (index + 1) * batch_size],
                 y: self.testY[index * batch_size: (index + 1) * batch_size]
@@ -266,6 +277,12 @@ class CNN(object):
                     print('epoch %i, minibatch %i/%i, validation error %f %%' %
                           (epoch, minibatch_index + 1, n_train_batches,
                            validation_loss * 100.))
+        pickle.dump([
+            self.layer3,
+            self.layer2,
+            self.layer1,
+            self.layer0,
+        ], open('layers_' + str(TRAINING_SIZE) + '.pkl', 'wb'))
 
     def score(self):
         n_test_batches = TESTING_SIZE / self.batch_size
@@ -291,5 +308,5 @@ if __name__ == '__main__':
     print 'trained'
     m = cnn.testX[25:25+cnn.batch_size]
     mnist = fetch_mldata('MNIST original')
-    X = mnist.data[0:TRAINING_SIZE]
+    X = mnist.data
     print cnn.predict(X[0:5])
