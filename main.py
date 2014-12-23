@@ -23,7 +23,7 @@ class Predictor():
         return 2 * score[0][self.number] - 1.0
 
 
-cnn = CNN(epochs=100, batch_size=100)
+cnn = CNN(epochs=100, batch_size=100, instance_id=RUN_INSTANCE)
 cnn.train()
 for i in xrange(NB_IMAGES):
     for i in xrange(10):
