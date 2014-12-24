@@ -6,6 +6,7 @@ import pickle as pickle
 import theano.tensor as T
 import numpy as np
 
+from os.path import isfile
 from sklearn.datasets import fetch_mldata
 from theano import (
     shared,
@@ -20,24 +21,18 @@ from theano.tensor.signal import downsample
 
 warnings.filterwarnings("ignore")
 
-TRAINING_SIZE = 69000
+TRAINING_SIZE = 6000
 TESTING_SIZE = 1000
 
 
 class Layer(object):
-    def __getstate__(self):
-        return (self.W, self.b)
-
-    def __setstate__(self, state):
-        W, b = state
-        self.W = W
-        self.b = b
+    pass
 
 
 class LogisticRegression(Layer):
-    def __init__(self, input, n_in, n_out):
-        self.W = self.init_weights(n_in, n_out)
-        self.b = self.init_bias(n_out)
+    def __init__(self, input, n_in, n_out, W=None, b=None):
+        self.W = W if W else self.init_weights(n_in, n_out)
+        self.b = b if b else self.init_bias(n_out)
         self.p_y_given_x = softmax(T.dot(input, self.W) + self.b)
         self.y_pred = T.argmax(self.p_y_given_x, axis=1)
         self.params = [self.W, self.b]
@@ -108,11 +103,12 @@ class HiddenLayer(Layer):
 
 
 class ConvPoolLayer(Layer):
-    def __init__(self, rng, input, filter_shape, image_shape, poolsize=(2, 2)):
+    def __init__(self, rng, input, filter_shape, image_shape, poolsize=(2, 2),
+                 W=None, b=None):
         assert image_shape[1] == filter_shape[1]
         self.input = input
-        self.W = self.init_weights(rng, filter_shape, poolsize)
-        self.b = self.init_bias(filter_shape)
+        self.W = W if W else self.init_weights(rng, filter_shape, poolsize)
+        self.b = b if b else self.init_bias(filter_shape)
         self.output = self.define_output(filter_shape, image_shape, poolsize)
         self.params = [self.W, self.b]
 
@@ -156,16 +152,17 @@ class CNN(object):
         nkerns = number of kernels on each layer
         batch_size = the size of the training batches
     """
-    def __init__(self, alpha=0.1, epochs=200, nkerns=[20, 50], batch_size=500, 
+    def __init__(self, alpha=0.1, epochs=200, nkerns=[20, 50], batch_size=500,
                  instance_id=None):
+        self.instance = instance_id
         self.epochs = epochs
         self.alpha = alpha
         self.batch_size = batch_size
         self.fetch_sets()
         self.init_network(nkerns, batch_size)
-        self.instance = instance_id
 
     def init_network(self, nkerns, batch_size):
+        s = self.get_training()
         rng = np.random.RandomState(1324)
         x = T.matrix('x')
         y = T.ivector('y')
@@ -175,14 +172,18 @@ class CNN(object):
             input=input0,
             image_shape=(batch_size, 1, 28, 28),
             filter_shape=(nkerns[0], 1, 5, 5),
-            poolsize=(2, 2)
+            poolsize=(2, 2),
+            W=s['0']['W'],
+            b=s['0']['b']
         )
         self.layer1 = ConvPoolLayer(
             rng=rng,
             input=self.layer0.output,
             image_shape=(batch_size, nkerns[0], 12, 12),
             filter_shape=(nkerns[1], nkerns[0], 5, 5),
-            poolsize=(2, 2)
+            poolsize=(2, 2),
+            W=s['1']['W'],
+            b=s['1']['b']
         )
         input2 = self.layer1.output.flatten(2)
         self.layer2 = HiddenLayer(
@@ -190,12 +191,16 @@ class CNN(object):
             input=input2,
             n_in=nkerns[1] * 4 * 4,
             n_out=500,
-            activation=T.tanh
+            activation=T.tanh,
+            W=s['2']['W'],
+            b=s['2']['b']
         )
         self.layer3 = LogisticRegression(
             input=self.layer2.output,
             n_in=500,
-            n_out=10
+            n_out=10,
+            W=s['3']['W'],
+            b=s['3']['b']
         )
         cost = self.layer3.negative_log_likelihood(y)
         params = (
@@ -221,7 +226,6 @@ class CNN(object):
             },
             on_unused_input='ignore'
         )
-
         self.validate_model = function(
             [index],
             self.layer3.errors(y),
@@ -272,7 +276,7 @@ class CNN(object):
     def train(self):
         old_training = 0
         if self.instance:
-            old_training = self.load_training_values()
+            old_training = self.get_training()['epoch']
         n_train_batches = TRAINING_SIZE / self.batch_size
         for epoch in xrange(self.epochs - old_training):
             for minibatch_index in xrange(n_train_batches):
@@ -280,30 +284,65 @@ class CNN(object):
                 cost_ij = self.train_model(minibatch_index)
                 if (iter + 1) % n_train_batches == 0:
                     validation_loss = self.score()
-                    print('epoch %i, minibatch %i/%i, validation error %f %%' %
-                          (epoch, minibatch_index + 1, n_train_batches,
+                    print('epoch %i/%i, minibatch %i/%i, validation error %f %%' %
+                          (epoch, self.epochs - old_training, minibatch_index + 1, n_train_batches,
                            validation_loss * 100.))
                     self.save_network(epoch + old_training)
-                    
-    def load_training_values(self):
-        saved = pickle.load(
-            open('layers_' + str(self.instance) + '.pkl', 'wb')
-        )
+
+    def get_training(self):
+        saved = None
+        if isfile('layers_' + str(self.instance) + '.pkl'):
+            saved = pickle.load(
+                open('layers_' + str(self.instance) + '.pkl', 'rb')
+            )
         if saved and len(saved) == 5:
-            self.layer0 = saved[4]
-            self.layer1 = saved[3]
-            self.layer2 = saved[2]
-            self.layer3 = saved[1]
-            return saved[0]
-        return 0
-                    
+            s = {
+                '0': {
+                    'W': saved[4][0],
+                    'b': saved[4][1]
+                },
+                '1':  {
+                    'W': saved[3][0],
+                    'b': saved[3][1]
+                },
+                '2':  {
+                    'W': saved[2][0],
+                    'b': saved[2][1]
+                },
+                '3':  {
+                    'W': saved[1][0],
+                    'b': saved[1][1]
+                },
+                'epoch': saved[0]
+            }
+            return s
+        return {
+                '0': {
+                    'W': None,
+                    'b': None
+                },
+                '1':  {
+                    'W': None,
+                    'b': None
+                },
+                '2':  {
+                    'W': None,
+                    'b': None
+                },
+                '3':  {
+                    'W': None,
+                    'b': None
+                },
+                'epoch': 0
+            }
+
     def save_network(self, epoch):
         pickle.dump([
             epoch,
-            self.layer3,
-            self.layer2,
-            self.layer1,
-            self.layer0,
+            self.layer3.params,
+            self.layer2.params,
+            self.layer1.params,
+            self.layer0.params,
         ], open('layers_' + str(self.instance) + '.pkl', 'wb'))
 
     def score(self):
@@ -324,7 +363,7 @@ class CNN(object):
 
 if __name__ == '__main__':
     print 'creating'
-    cnn = CNN(epochs=10, batch_size=1000)
+    cnn = CNN(epochs=10, batch_size=1000, instance_id=666)
     print 'created'
     cnn.train()
     print 'trained'
