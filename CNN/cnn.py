@@ -21,7 +21,7 @@ from theano.tensor.signal import downsample
 
 warnings.filterwarnings("ignore")
 
-TRAINING_SIZE = 6000
+TRAINING_SIZE = 69000
 TESTING_SIZE = 1000
 
 

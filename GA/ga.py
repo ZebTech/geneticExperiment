@@ -16,7 +16,7 @@ POPULATION_SIZE = 150
 
 class GeneticAlgorithm():
     def __init__(self, pred, ind=None):
-        self.init_plot()
+#        self.init_plot()
         self.predictor = pred
         self.population = Population(ind)
         self.optimal_individual = ind if ind else Individual()
@@ -31,7 +31,7 @@ class GeneticAlgorithm():
             )
             opt = self.predictor.predict(self.optimal_individual)
             self.evolution.append(opt)
-            self.plot()
+ #           self.plot()
             print 'Generation ' + str(generation) + ', best score: ' + str(opt)
             generation += 1
         return self.optimal_individual
