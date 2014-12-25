@@ -10749,3 +10749,229 @@ Traceback (most recent call last):
   File "/usr/lib/python2.7/threading.py", line 745, in start
     _start_new_thread(self.__bootstrap, ())
 thread.error: can't start new thread
+Using gpu device 0: GRID K520
+Using gpu device 0: GRID K520
+Naive test score: 0.98
+Generation 0, best score: -0.589550048113
+Generation 1, best score: -0.589550048113
+Generation 2, best score: -0.589550048113
+Generation 3, best score: -0.589550048113
+Generation 4, best score: -0.589550048113
+Generation 5, best score: -0.589550048113
+Generation 6, best score: -0.589550048113
+Generation 7, best score: -0.589550048113
+Generation 8, best score: -0.589550048113
+Generation 9, best score: -0.589550048113
+Generation 10, best score: -0.589550048113
+Generation 11, best score: -0.589550048113
+Generation 12, best score: -0.589550048113
+Generation 13, best score: -0.589550048113
+Generation 14, best score: -0.589550048113
+Generation 15, best score: -0.589550048113
+Generation 16, best score: -0.589550048113
+Generation 17, best score: -0.589550048113
+Generation 18, best score: -0.589550048113
+Generation 19, best score: -0.589550048113
+Generation 20, best score: -0.589550048113
+Generation 21, best score: -0.580201387405
+Generation 22, best score: -0.41836309433
+Generation 23, best score: -0.0216200947762
+Generation 24, best score: 0.465381860733
+Generation 25, best score: 0.465381860733
+Generation 26, best score: 0.639091491699
+Generation 27, best score: 0.679863095284
+Generation 28, best score: 0.679863095284
+Generation 29, best score: 0.679863095284
+Generation 30, best score: 0.743125200272
+Generation 31, best score: 0.878024816513
+Generation 32, best score: 0.916437506676
+Found optimal:[1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+Naive test score: 0.98
+Generation 0, best score: -0.0584923624992
+Generation 1, best score: -0.0584923624992
+Generation 2, best score: -0.0584923624992
+Generation 3, best score: 0.0468205213547
+Generation 4, best score: 0.362452864647
+Generation 5, best score: 0.362452864647
+Generation 6, best score: 0.36Using gpu device 0: GRID K520
+Traceback (most recent call last):
+  File "main.py", line 3, in <module>
+    from CNN.cnn import CNN
+  File "/home/ubuntu/dev/geneticExperiment/CNN/cnn.py", line 4, in <module>
+    import theano
+  File "/usr/local/lib/python2.7/dist-packages/theano/__init__.py", line 92, in <module>
+    theano.sandbox.cuda.tests.test_driver.test_nvidia_driver1()
+  File "/usr/local/lib/python2.7/dist-packages/theano/sandbox/cuda/tests/test_driver.py", line 32, in test_nvidia_driver1
+    profile=False)
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/function.py", line 265, in function
+    profile=profile)
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/pfunc.py", line 511, in pfunc
+    on_unused_input=on_unused_input)
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/function_module.py", line 1340, in orig_function
+    on_unused_input=on_unused_input).create(
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/function_module.py", line 1006, in __init__
+    theano.gof.cc.get_module_cache().refresh()
+  File "/usr/local/lib/python2.7/dist-packages/theano/gof/cc.py", line 84, in get_module_cache
+    return cmodule.get_module_cache(config.compiledir, init_args=init_args)
+  File "/usr/local/lib/python2.7/dist-packages/theano/gof/cmodule.py", line 1420, in get_module_cache
+    _module_cache = ModuleCache(dirname, **init_args)
+  File "/usr/local/lib/python2.7/dist-packages/theano/gof/cmodule.py", line 611, in __init__
+    self.refresh()
+  File "/usr/local/lib/python2.7/dist-packages/theano/gof/cmodule.py", line 657, in refresh
+    files = os.listdir(root)
+OSError: [Errno 13] Permission denied: '/home/ubuntu/.theano/compiledir_Linux-3.13.0-37-generic-x86_64-with-Ubuntu-14.04-trusty-x86_64-2.7.6-64/tmp0PIFsC'
+Using gpu device 0: GRID K520
+Traceback (most recent call last):
+  File "main.py", line 3, in <module>
+    from CNN.cnn import CNN
+  File "/home/ubuntu/dev/geneticExperiment/CNN/cnn.py", line 4, in <module>
+    import theano
+  File "/usr/local/lib/python2.7/dist-packages/theano/__init__.py", line 92, in <module>
+    theano.sandbox.cuda.tests.test_driver.test_nvidia_driver1()
+  File "/usr/local/lib/python2.7/dist-packages/theano/sandbox/cuda/tests/test_driver.py", line 32, in test_nvidia_driver1
+    profile=False)
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/function.py", line 265, in function
+    profile=profile)
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/pfunc.py", line 511, in pfunc
+    on_unused_input=on_unused_input)
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/function_module.py", line 1340, in orig_function
+    on_unused_input=on_unused_input).create(
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/function_module.py", line 1006, in __init__
+    theano.gof.cc.get_module_cache().refresh()
+  File "/usr/local/lib/python2.7/dist-packages/theano/gof/cc.py", line 84, in get_module_cache
+    return cmodule.get_module_cache(config.compiledir, init_args=init_args)
+  File "/usr/local/lib/python2.7/dist-packages/theano/gof/cmodule.py", line 1420, in get_module_cache
+    _module_cache = ModuleCache(dirname, **init_args)
+  File "/usr/local/lib/python2.7/dist-packages/theano/gof/cmodule.py", line 611, in __init__
+    self.refresh()
+  File "/usr/local/lib/python2.7/dist-packages/theano/gof/cmodule.py", line 657, in refresh
+    files = os.listdir(root)
+OSError: [Errno 13] Permission denied: '/home/ubuntu/.theano/compiledir_Linux-3.13.0-37-generic-x86_64-with-Ubuntu-14.04-trusty-x86_64-2.7.6-64/tmp0PIFsC'
+Using gpu device 0: GRID K520
+Traceback (most recent call last):
+  File "main.py", line 3, in <module>
+    from CNN.cnn import CNN
+  File "/home/ubuntu/dev/geneticExperiment/CNN/cnn.py", line 4, in <module>
+    import theano
+  File "/usr/local/lib/python2.7/dist-packages/theano/__init__.py", line 92, in <module>
+    theano.sandbox.cuda.tests.test_driver.test_nvidia_driver1()
+  File "/usr/local/lib/python2.7/dist-packages/theano/sandbox/cuda/tests/test_driver.py", line 32, in test_nvidia_driver1
+    profile=False)
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/function.py", line 265, in function
+    profile=profile)
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/pfunc.py", line 511, in pfunc
+    on_unused_input=on_unused_input)
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/function_module.py", line 1340, in orig_function
+    on_unused_input=on_unused_input).create(
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/function_module.py", line 1006, in __init__
+    theano.gof.cc.get_module_cache().refresh()
+  File "/usr/local/lib/python2.7/dist-packages/theano/gof/cc.py", line 84, in get_module_cache
+    return cmodule.get_module_cache(config.compiledir, init_args=init_args)
+  File "/usr/local/lib/python2.7/dist-packages/theano/gof/cmodule.py", line 1420, in get_module_cache
+    _module_cache = ModuleCache(dirname, **init_args)
+  File "/usr/local/lib/python2.7/dist-packages/theano/gof/cmodule.py", line 611, in __init__
+    self.refresh()
+  File "/usr/local/lib/python2.7/dist-packages/theano/gof/cmodule.py", line 657, in refresh
+    files = os.listdir(root)
+OSError: [Errno 13] Permission denied: '/home/ubuntu/.theano/compiledir_Linux-3.13.0-37-generic-x86_64-with-Ubuntu-14.04-trusty-x86_64-2.7.6-64/tmp0PIFsC'
+Using gpu device 0: GRID K520
+Traceback (most recent call last):
+  File "main.py", line 3, in <module>
+    from CNN.cnn import CNN
+  File "/home/ubuntu/dev/geneticExperiment/CNN/cnn.py", line 4, in <module>
+    import theano
+  File "/usr/local/lib/python2.7/dist-packages/theano/__init__.py", line 92, in <module>
+    theano.sandbox.cuda.tests.test_driver.test_nvidia_driver1()
+  File "/usr/local/lib/python2.7/dist-packages/theano/sandbox/cuda/tests/test_driver.py", line 32, in test_nvidia_driver1
+    profile=False)
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/function.py", line 265, in function
+    profile=profile)
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/pfunc.py", line 511, in pfunc
+    on_unused_input=on_unused_input)
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/function_module.py", line 1340, in orig_function
+    on_unused_input=on_unused_input).create(
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/function_module.py", line 1006, in __init__
+    theano.gof.cc.get_module_cache().refresh()
+  File "/usr/local/lib/python2.7/dist-packages/theano/gof/cc.py", line 84, in get_module_cache
+    return cmodule.get_module_cache(config.compiledir, init_args=init_args)
+  File "/usr/local/lib/python2.7/dist-packages/theano/gof/cmodule.py", line 1420, in get_module_cache
+    _module_cache = ModuleCache(dirname, **init_args)
+  File "/usr/local/lib/python2.7/dist-packages/theano/gof/cmodule.py", line 611, in __init__
+    self.refresh()
+  File "/usr/local/lib/python2.7/dist-packages/theano/gof/cmodule.py", line 657, in refresh
+    files = os.listdir(root)
+OSError: [Errno 13] Permission denied: '/home/ubuntu/.theano/compiledir_Linux-3.13.0-37-generic-x86_64-with-Ubuntu-14.04-trusty-x86_64-2.7.6-64/tmp0PIFsC'
+Using gpu device 0: GRID K520
+Traceback (most recent call last):
+  File "main.py", line 3, in <module>
+    from CNN.cnn import CNN
+  File "/home/ubuntu/dev/geneticExperiment/CNN/cnn.py", line 4, in <module>
+    import theano
+  File "/usr/local/lib/python2.7/dist-packages/theano/__init__.py", line 92, in <module>
+    theano.sandbox.cuda.tests.test_driver.test_nvidia_driver1()
+  File "/usr/local/lib/python2.7/dist-packages/theano/sandbox/cuda/tests/test_driver.py", line 32, in test_nvidia_driver1
+    profile=False)
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/function.py", line 265, in function
+    profile=profile)
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/pfunc.py", line 511, in pfunc
+    on_unused_input=on_unused_input)
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/function_module.py", line 1340, in orig_function
+    on_unused_input=on_unused_input).create(
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/function_module.py", line 1006, in __init__
+    theano.gof.cc.get_module_cache().refresh()
+  File "/usr/local/lib/python2.7/dist-packages/theano/gof/cc.py", line 84, in get_module_cache
+    return cmodule.get_module_cache(config.compiledir, init_args=init_args)
+  File "/usr/local/lib/python2.7/dist-packages/theano/gof/cmodule.py", line 1420, in get_module_cache
+    _module_cache = ModuleCache(dirname, **init_args)
+  File "/usr/local/lib/python2.7/dist-packages/theano/gof/cmodule.py", line 611, in __init__
+    self.refresh()
+  File "/usr/local/lib/python2.7/dist-packages/theano/gof/cmodule.py", line 657, in refresh
+    files = os.listdir(root)
+OSError: [Errno 13] Permission denied: '/home/ubuntu/.theano/compiledir_Linux-3.13.0-37-generic-x86_64-with-Ubuntu-14.04-trusty-x86_64-2.7.6-64/tmp0PIFsC'
+ERROR (theano.sandbox.cuda): Failed to compile cuda_ndarray.cu: libcublas.so.6.5: cannot open shared object file: No such file or directory
+WARNING (theano.sandbox.cuda): CUDA is installed, but device gpu is not available 
+Traceback (most recent call last):
+  File "main.py", line 26, in <module>
+    cnn = CNN(epochs=100, batch_size=100, instance_id=RUN_INSTANCE)
+  File "/home/ubuntu/dev/geneticExperiment/CNN/cnn.py", line 162, in __init__
+    self.init_network(nkerns, batch_size)
+  File "/home/ubuntu/dev/geneticExperiment/CNN/cnn.py", line 165, in init_network
+    s = self.get_training()
+  File "/home/ubuntu/dev/geneticExperiment/CNN/cnn.py", line 296, in get_training
+    open('layers_' + str(self.instance) + '.pkl', 'rb')
+  File "/usr/lib/python2.7/pickle.py", line 1378, in load
+    return Unpickler(file).load()
+  File "/usr/lib/python2.7/pickle.py", line 858, in load
+    dispatch[key](self)
+  File "/usr/lib/python2.7/pickle.py", line 1133, in load_reduce
+    value = func(*args)
+  File "/usr/local/lib/python2.7/dist-packages/theano/sandbox/cuda/type.py", line 516, in CudaNdarray_unpickler
+    raise ImportError("Cuda not found. Cannot unpickle CudaNdarray")
+ImportError: Cuda not found. Cannot unpickle CudaNdarray
+Using gpu device 0: GRID K520
+Traceback (most recent call last):
+  File "main.py", line 3, in <module>
+    from CNN.cnn import CNN
+  File "/home/ubuntu/dev/geneticExperiment/CNN/cnn.py", line 4, in <module>
+    import theano
+  File "/usr/local/lib/python2.7/dist-packages/theano/__init__.py", line 92, in <module>
+    theano.sandbox.cuda.tests.test_driver.test_nvidia_driver1()
+  File "/usr/local/lib/python2.7/dist-packages/theano/sandbox/cuda/tests/test_driver.py", line 32, in test_nvidia_driver1
+    profile=False)
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/function.py", line 265, in function
+    profile=profile)
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/pfunc.py", line 511, in pfunc
+    on_unused_input=on_unused_input)
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/function_module.py", line 1340, in orig_function
+    on_unused_input=on_unused_input).create(
+  File "/usr/local/lib/python2.7/dist-packages/theano/compile/function_module.py", line 1006, in __init__
+    theano.gof.cc.get_module_cache().refresh()
+  File "/usr/local/lib/python2.7/dist-packages/theano/gof/cc.py", line 84, in get_module_cache
+    return cmodule.get_module_cache(config.compiledir, init_args=init_args)
+  File "/usr/local/lib/python2.7/dist-packages/theano/gof/cmodule.py", line 1420, in get_module_cache
+    _module_cache = ModuleCache(dirname, **init_args)
+  File "/usr/local/lib/python2.7/dist-packages/theano/gof/cmodule.py", line 611, in __init__
+    self.refresh()
+  File "/usr/local/lib/python2.7/dist-packages/theano/gof/cmodule.py", line 657, in refresh
+    files = os.listdir(root)
+OSError: [Errno 13] Permission denied: '/home/ubuntu/.theano/compiledir_Linux-3.13.0-37-generic-x86_64-with-Ubuntu-14.04-trusty-x86_64-2.7.6-64/tmp0PIFsC'
